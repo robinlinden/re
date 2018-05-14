@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require "io/console"
+
 class Editor
     def initialize
         lines = File.readlines("test.txt").map do |line|
@@ -9,9 +11,11 @@ class Editor
     end
 
     def run
-        loop do
-            render
-            handle_input
+        IO.console.raw do
+            loop do
+                render
+                handle_input
+            end
         end
     end
 
@@ -19,7 +23,11 @@ class Editor
     end
 
     def handle_input
+        key = $stdin.getc
+        case key
+        when "\C-x" then exit(0)
+        end
     end
 end
 
-Editor.new
+Editor.new.run
