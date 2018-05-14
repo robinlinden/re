@@ -32,10 +32,10 @@ class Editor
         key = $stdin.getc
         case key
         when "\C-x" then exit(0)
-        when "\C-p" then @cursor = @cursor.up
-        when "\C-n" then @cursor = @cursor.down
-        when "\C-b" then @cursor = @cursor.left
-        when "\C-f" then @cursor = @cursor.right
+        when "\C-p" then @cursor = @cursor.up(@buffer)
+        when "\C-n" then @cursor = @cursor.down(@buffer)
+        when "\C-b" then @cursor = @cursor.left(@buffer)
+        when "\C-f" then @cursor = @cursor.right(@buffer)
         end
     end
 end
@@ -51,6 +51,14 @@ class Buffer
             ANSI.cursor_next_line
         end
     end
+
+    def line_count
+        @lines.count
+    end
+
+    def line_length(row)
+        @lines.fetch(row).length
+    end
 end
 
 class Cursor
@@ -61,20 +69,26 @@ class Cursor
         @col = col
     end
 
-    def up
-        Cursor.new(@row - 1, @col)
+    def up(buffer)
+        Cursor.new(@row - 1, @col).clamp(buffer)
     end
 
-    def down
-        Cursor.new(@row + 1, @col)
+    def down(buffer)
+        Cursor.new(@row + 1, @col).clamp(buffer)
     end
 
-    def left
-        Cursor.new(@row, @col - 1)
+    def left(buffer)
+        Cursor.new(@row, @col - 1).clamp(buffer)
     end
 
-    def right
-        Cursor.new(@row, @col + 1)
+    def right(buffer)
+        Cursor.new(@row, @col + 1).clamp(buffer)
+    end
+
+    def clamp(buffer)
+        row = @row.clamp(0, buffer.line_count - 1)
+        col = @col.clamp(0, buffer.line_length(row))
+        Cursor.new(row, col)
     end
 end
 
