@@ -32,6 +32,10 @@ class Editor
         key = $stdin.getc
         case key
         when "\C-x" then exit(0)
+        when "\C-p" then @cursor = @cursor.up
+        when "\C-n" then @cursor = @cursor.down
+        when "\C-b" then @cursor = @cursor.left
+        when "\C-f" then @cursor = @cursor.right
         end
     end
 end
@@ -55,6 +59,22 @@ class Cursor
     def initialize(row=0, col=0)
         @row = row
         @col = col
+    end
+
+    def up
+        Cursor.new(@row - 1, @col)
+    end
+
+    def down
+        Cursor.new(@row + 1, @col)
+    end
+
+    def left
+        Cursor.new(@row, @col - 1)
+    end
+
+    def right
+        Cursor.new(@row, @col + 1)
     end
 end
 
