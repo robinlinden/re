@@ -20,6 +20,7 @@ class Editor
 
     def render
         ANSI.clear_screen
+        ANSI.move_cursor(0, 0)
         p @lines
     end
 
@@ -34,6 +35,10 @@ end
 class ANSI
     def self.clear_screen
         $stdout.write("\e[2J")
+    end
+
+    def self.move_cursor(row, col)
+        $stdout.write("\e[#{row + 1};#{col + 1}H")
     end
 end
 
