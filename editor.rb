@@ -7,7 +7,9 @@ class Editor
         lines = File.readlines("test.txt").map do |line|
             line.sub(/\n$/, "")
         end
+
         @buffer = Buffer.new(lines)
+        @cursor = Cursor.new
     end
 
     def run
@@ -23,6 +25,7 @@ class Editor
         ANSI.clear_screen
         ANSI.move_cursor(0, 0)
         @buffer.render
+        ANSI.move_cursor(@cursor.row, @cursor.col)
     end
 
     def handle_input
@@ -43,6 +46,15 @@ class Buffer
             $stdout.write(line)
             ANSI.cursor_next_line
         end
+    end
+end
+
+class Cursor
+    attr_reader :row, :col
+
+    def initialize(row=0, col=0)
+        @row = row
+        @col = col
     end
 end
 
