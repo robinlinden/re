@@ -4,10 +4,9 @@ require "io/console"
 
 class Editor
     def initialize
-        lines = File.readlines("test.txt").map do |line|
+        @lines = File.readlines("test.txt").map do |line|
             line.sub(/\n$/, "")
         end
-        p lines
     end
 
     def run
@@ -20,6 +19,8 @@ class Editor
     end
 
     def render
+        ANSI.clear_screen
+        p @lines
     end
 
     def handle_input
@@ -27,6 +28,12 @@ class Editor
         case key
         when "\C-x" then exit(0)
         end
+    end
+end
+
+class ANSI
+    def self.clear_screen
+        $stdout.write("\e[2J")
     end
 end
 
