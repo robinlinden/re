@@ -36,6 +36,11 @@ class Editor
         when "\C-n" then @cursor = @cursor.down(@buffer)
         when "\C-b" then @cursor = @cursor.left(@buffer)
         when "\C-f" then @cursor = @cursor.right(@buffer)
+        when "\b"
+            if @cursor.col > 0
+                @buffer = @buffer.delete(@cursor.row, @cursor.col - 1)
+                @cursor = @cursor.left(@buffer)
+            end
         else
             @buffer = @buffer.insert(key, @cursor.row, @cursor.col)
             @cursor = @cursor.right(@buffer)
@@ -51,6 +56,12 @@ class Buffer
     def insert(char, row, col)
         lines = @lines.map(&:dup)
         lines.fetch(row).insert(col, char)
+        Buffer.new(lines)
+    end
+
+    def delete(row, col)
+        lines = @lines.map(&:dup)
+        lines.fetch(row).slice!(col)
         Buffer.new(lines)
     end
 
