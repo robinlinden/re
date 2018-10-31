@@ -14,6 +14,7 @@ class Editor
 
     def run
         IO.console.raw do
+            ANSI.enter_alternative_buffer
             loop do
                 render
                 handle_input
@@ -31,7 +32,10 @@ class Editor
     def handle_input
         key = $stdin.getc
         case key
-        when "\C-x" then exit(0)
+        when "\C-x" then
+            ANSI.clear_screen
+            ANSI.leave_alternative_buffer
+            exit(0)
         when "\C-p" then @cursor = @cursor.up(@buffer)
         when "\C-n" then @cursor = @cursor.down(@buffer)
         when "\C-b" then @cursor = @cursor.left(@buffer)
@@ -127,6 +131,14 @@ class ANSI
 
     def self.cursor_next_line(count=1)
         $stdout.write("\e[#{count}E")
+    end
+
+    def self.enter_alternative_buffer
+        $stdout.write("\e[1049h")
+    end
+
+    def self.leave_alternative_buffer
+        $stdout.write("\e[1049l")
     end
 end
 
